@@ -11,9 +11,5 @@
 #SBATCH --mail-type=START,FAIL,END      # Says when the job starts, fails, or ends
 #SBATCH --mail-user=zjwinn@colostate.edu
 
-# Activate conda environment
-source /home/zjwinn/miniconda3/etc/profile.d/conda.sh
-conda activate R
-
 # Run R script
 Rscript Analysis.R
