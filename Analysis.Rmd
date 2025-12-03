@@ -52,12 +52,12 @@ library(ggplot2)
 library(patchwork)
 
 # Check dependencies
-if (!requireNamespace("BiocManager", quietly = TRUE)) {
-  install.packages("BiocManager")
-}
-if (!requireNamespace("GENESIS", quietly = TRUE)) {
-  BiocManager::install("GENESIS")
-}
+# if (!requireNamespace("BiocManager", quietly = TRUE)) {
+#   install.packages("BiocManager")
+# }
+# if (!requireNamespace("GENESIS", quietly = TRUE)) {
+#   BiocManager::install("GENESIS")
+# }
 
 # Define the inverse normal transformation with blom offset function
 INT_blom <- function(x) {

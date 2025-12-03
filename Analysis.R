@@ -8,12 +8,12 @@ library(ggplot2)
 library(patchwork)
 
 # Check dependencies
-if (!requireNamespace("BiocManager", quietly = TRUE)) {
-  install.packages("BiocManager")
-}
-if (!requireNamespace("GENESIS", quietly = TRUE)) {
-  BiocManager::install("GENESIS")
-}
+# if (!requireNamespace("BiocManager", quietly = TRUE)) {
+#   install.packages("BiocManager")
+# }
+# if (!requireNamespace("GENESIS", quietly = TRUE)) {
+#   BiocManager::install("GENESIS")
+# }
 
 # Define the inverse normal transformation with blom offset function
 INT_blom <- function(x) {
@@ -90,7 +90,7 @@ if (!file.exists("blues_single_environment.csv")) {
 
         # If it fails toss the data
         if (class(temp3) == "try-error") {
-          remove(temp2, temp3)
+          remove(temp2,temp3)
           next
         }
 
@@ -480,14 +480,14 @@ for (i in c("GY", "TW", "Virus")) {
   print(border)
   print(print_message)
   print(border)
-
+    
   # Make message for system time
   print_message <- paste("### System Time =", Sys.time(), "###")
   border <- paste(rep("#", nchar(print_message)), collapse = "")
   print(border)
   print(print_message)
   print(border)
-
+  
   # Run Null Model for normal response
   temp1 <- GENESIS::fitNullModel(scanAnnot,
     outcome = i,
@@ -528,14 +528,14 @@ for (i in c("GY", "TW", "Virus")) {
       Est.SE,
       PVE
     ) |>
-    dplyr::mutate(break_bft = ifelse(neg_log_pval >= -log10(0.05 / nrow(temp3)),
+    dplyr::mutate(break_bft = ifelse(neg_log_pval >= -log10(0.05/nrow(temp3)),
       1,
       0
     ))
 
   # Now plot
   temp5 <- plot_gwas(temp4,
-    threshold = -log10(0.05 / nrow(temp3))
+    threshold = -log10(0.05/nrow(temp3))
   )
 
   # Now save image
@@ -553,20 +553,19 @@ for (i in c("GY", "TW", "Virus")) {
 
   # Remove
   remove(temp1, temp2, temp3, temp4, temp5)
-
+  
   # Make message for system time
   print_message <- paste("### System Time =", Sys.time(), "###")
   border <- paste(rep("#", nchar(print_message)), collapse = "")
   print(border)
   print(print_message)
-  print(border)
+  print(border)  
 }
 
 # Write out results
 write.csv(GWAS_results_continuous,
-  "gwas_results_continuous.csv",
-  row.names = FALSE
-)
+          "gwas_results_continuous.csv",
+          row.names = FALSE)
 
 
 ## ----gwas_binomial--------------------------------------------------------------------------------------------------------
@@ -792,14 +791,14 @@ for (i in c("Virus")) {
   print(border)
   print(print_message)
   print(border)
-
+    
   # Make message for system time
   print_message <- paste("### System Time =", Sys.time(), "###")
   border <- paste(rep("#", nchar(print_message)), collapse = "")
   print(border)
   print(print_message)
   print(border)
-
+  
   # Run Null Model for binomial response
   temp1 <- GENESIS::fitNullModel(scanAnnot,
     outcome = i,
@@ -841,14 +840,14 @@ for (i in c("Virus")) {
       Est.SE,
       PVE
     ) |>
-    dplyr::mutate(break_bft = ifelse(neg_log_pval >= -log10(0.05 / nrow(temp3)),
+    dplyr::mutate(break_bft = ifelse(neg_log_pval >= -log10(0.05/nrow(temp3)),
       1,
       0
     ))
 
   # Now plot
   temp5 <- plot_gwas(temp4,
-    threshold = -log10(0.05 / nrow(temp3))
+    threshold = -log10(0.05/nrow(temp3))
   )
 
   # Now save image
@@ -866,20 +865,19 @@ for (i in c("Virus")) {
 
   # Remove
   remove(temp1, temp2, temp3, temp4, temp5)
-
+  
   # Make message for system time
   print_message <- paste("### System Time =", Sys.time(), "###")
   border <- paste(rep("#", nchar(print_message)), collapse = "")
   print(border)
   print(print_message)
-  print(border)
+  print(border)  
 }
 
 # Write out results
 write.csv(GWAS_results_binomial,
-  "gwas_results_binomial.csv",
-  row.names = FALSE
-)
+          "gwas_results_binomial.csv",
+          row.names = FALSE)
 
 
 ## ----legacy_code, eval=FALSE, include=FALSE-------------------------------------------------------------------------------
@@ -1052,7 +1050,7 @@ write.csv(GWAS_results_binomial,
 # #   "gwas_results_full.csv",
 # #   row.names = FALSE
 # # )
-#
+# 
 # # #### rrBLUP ####
 # # # Make marker matrix
 # # marker_map <- geno@snps
@@ -1120,3 +1118,4 @@ write.csv(GWAS_results_binomial,
 # #                                 plot = FALSE)
 # # #### Save ####
 # # save.image(file = "Final_Image.RData")
+
