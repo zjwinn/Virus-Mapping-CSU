@@ -47,3 +47,12 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Ignore the haplotyping information with true variety names
+/predictive_haplotyping/Test_Plates_Map_and_Information_for_4A_and_7D_QTL.xlsx
+
+# Ignore manuscript
+/manuscript/*
+
+# Ignore anything with .RDS
+*.RDS
