@@ -16,7 +16,7 @@ options(tigris_use_cache = TRUE)
 
 # Ingest and format diagnostic data
 raw_data <- read_excel(
-  "Diagnostic Results_Mason.xlsx",
+  file.path(getwd(), "virus_frequency_analysis", "Diagnostic Results_Mason.xlsx"),
   sheet = "Table_all diagnostics",
   skip = 3
 ) |>
@@ -38,7 +38,8 @@ raw_data <- read_excel(
       levels = c("Uninfected", "WSMV Only", "TriMV Only", "Co-infected")
     )
   ) |>
-  as.data.frame()
+  as.data.frame() |>
+  dplyr::filter(Year != 2022)
 
 # Calculate empirical frequencies and zero-fill missing factors
 empirical_df <- raw_data |>
@@ -97,7 +98,7 @@ map_data <- county_shapes |>
   left_join(completed_spatial_df, by = c("STATEFP" = "state_code", "NAME" = "County_Name"))
 
 # Generate temporal visualization
-pub_plot_1 <- ggplot(empirical_df, aes(x = Year, y = Proportion, fill = State)) +
+pub_plot_1 <- ggplot(empirical_df, aes(x = factor(Year), y = Proportion, fill = State)) +
   geom_col(position = "stack", width = 0.7, color = "black") +
   geom_text(
     aes(label = Label),
@@ -107,8 +108,8 @@ pub_plot_1 <- ggplot(empirical_df, aes(x = Year, y = Proportion, fill = State)) 
     show.legend = FALSE
   ) +
   scale_fill_manual(values = c("gray90", "#E69F00", "#56B4E9", "#D55E00")) +
-  scale_x_continuous(
-    breaks = axis_labels$Year,
+  scale_x_discrete(
+    breaks = as.character(axis_labels$Year),
     labels = paste0(axis_labels$Year, "\n(", axis_labels$Total_Samples, ")")
   ) +
   scale_y_continuous(
@@ -154,7 +155,7 @@ pub_combined <- (pub_plot_1 + pub_plot_2) +
   )
 
 ggsave(
-  "Manuscript_Wheat_Virus_Color.jpeg",
+  file.path(getwd(), "virus_frequency_analysis", "Manuscript_Wheat_Virus_Color.jpeg"),
   plot = pub_combined,
   width = 12,
   height = 8,
@@ -163,7 +164,7 @@ ggsave(
 )
 
 # Generate temporal visualization
-poster_plot_1 <- ggplot(empirical_df, aes(x = Year, y = Proportion, fill = State)) +
+poster_plot_1 <- ggplot(empirical_df, aes(x = factor(Year), y = Proportion, fill = State)) +
   geom_col(position = "stack", width = 0.7, color = "black") +
   geom_text(
     aes(label = Label, color = State),
@@ -174,8 +175,8 @@ poster_plot_1 <- ggplot(empirical_df, aes(x = Year, y = Proportion, fill = State
   ) +
   scale_fill_manual(values = c("#E6E6E6", "#A6A6A6", "#595959", "#1A1A1A")) +
   scale_color_manual(values = c("black", "black", "white", "white")) +
-  scale_x_continuous(
-    breaks = axis_labels$Year,
+  scale_x_discrete(
+    breaks = as.character(axis_labels$Year),
     labels = paste0(axis_labels$Year, "\n(", axis_labels$Total_Samples, ")")
   ) +
   scale_y_continuous(
@@ -227,7 +228,7 @@ poster_combined <- (poster_plot_1 + poster_plot_2) +
   )
 
 ggsave(
-  "Poster_Wheat_Virus_BW.svg",
+  file.path(getwd(), "virus_frequency_analysis", "Poster_Wheat_Virus_BW.svg"),
   plot = poster_combined,
   width = 14,
   height = 8,
@@ -236,7 +237,7 @@ ggsave(
 )
 
 ggsave(
-  "Poster_Wheat_Virus_BW.jpeg",
+  file.path(getwd(), "virus_frequency_analysis", "Poster_Wheat_Virus_BW.jpeg"),
   plot = poster_combined,
   width = 14,
   height = 8,
