@@ -47,13 +47,29 @@ $$
 Where y is the observation for the $i$-th genotype in the $j$-th row in the $k$-th column, $\mu$ is the population mean, $G_i$ is the fixed genotype effect. The term $rc_{jk}$ denotes the random row-by-column spatial interaction modeled as a two-dimensional penalized tensor-product of marginal B-splines. This spatial effect is defined as $rc = Z_s u_s$, where $Z_s$ is the design matrix constructed from the Kronecker product of row and column B-spline bases ($B_r \otimes B_c$), and $u_s$ is the vector of spline coefficients with $u_s \sim \mathcal{N}(0, \mathbf{I}\sigma^2_s)$. The residual error was assumed $\varepsilon_{ijk} \sim \mathcal{N}(0, \mathbf{I}\sigma^2_\varepsilon)$.
 
 ```{r single_env_adj}
-# Check dependencies
-# if (!requireNamespace("BiocManager", quietly = TRUE)) {
-#   install.packages("BiocManager")
-# }
-# if (!requireNamespace("GENESIS", quietly = TRUE)) {
-#   BiocManager::install("GENESIS")
-# }
+# Ensure BiocManager is installed, as GWASTools and GENESIS are Bioconductor packages
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  cat("Installing BiocManager...\n")
+  install.packages("BiocManager", repos = "https://cloud.r-project.org")
+}
+
+# Define the required packages
+target_packages <- c("GWASTools", "GENESIS")
+
+# Identify which packages are not currently installed
+missing_packages <- target_packages[!(target_packages %in% installed.packages()[,"Package"])]
+
+# Install the missing packages if any
+if (length(missing_packages) > 0) {
+  cat("Installing missing packages: ", paste(missing_packages, collapse = ", "), "\n")
+  # Setting update = FALSE prevents it from prompting to update all other Bioc packages, 
+  # ask = FALSE prevents interactive prompts
+  BiocManager::install(missing_packages, update = FALSE, ask = FALSE)
+  cat("Installation complete.\n")
+} else {
+  cat("Success: GWASTools and GENESIS are already installed.\n")
+}
+
 
 # Make a directory
 directory <- file.path(
@@ -483,7 +499,7 @@ if (!file.exists(file.path(directory, "blues_multiple_environment_pre_yd.csv")) 
       fixed = predicted.value ~ rID,
       random = ~YEN,
       rcov = ~units,
-      W = diag(temp1$std.error),
+      W = diag(1/temp1$std.error^2),
       data = temp1
     )
 

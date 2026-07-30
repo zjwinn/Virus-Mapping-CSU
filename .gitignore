@@ -56,4 +56,12 @@ rsconnect/
 
 # Ignore anything with .RDS
 *.RDS
+
+# Ignore anything with .RData
+*.RData
+
+# Ignore anything I send to authors
 manuscript.zip
+
+# Ignore the internal review analysis 
+/internal_review_analysis/*
