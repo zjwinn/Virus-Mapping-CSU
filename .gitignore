@@ -65,3 +65,4 @@ manuscript.zip
 
 # Ignore the internal review analysis 
 /internal_review_analysis/*
+.DS_Store
