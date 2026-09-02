@@ -14,8 +14,12 @@ library(svglite)
 # Enable tigris geometry caching
 options(tigris_use_cache = TRUE)
 
+# Save original working directory and ensure safe restoration
+orig_dir <- getwd()
+on.exit(setwd(orig_dir))
+
 # Set working directory
-setwd(file.path(getwd(), "virus_frequency_analysis/"))
+setwd(file.path(orig_dir, "virus_frequency_analysis/"))
 
 # Ingest and format diagnostic data
 raw_data <- read_excel(

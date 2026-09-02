@@ -251,6 +251,9 @@ summary_table <- predcs_gwas |>
       Trait == "TW" ~ "Test Weight (Kg/Hl)",
       Trait == "WSMV" ~ "WSMV Ratings (Transformed)"
     )
+  ) |>
+  dplyr::filter(
+    !(Chromosome == "3D" & `Relative Position` %in% c("Proximal", "Distal"))
   )
 
 # Write csv
@@ -405,9 +408,11 @@ summary_table <- postdcs_gwas_c |>
   )
 
 # Curate table
-summary_table <- summary_table[
-  c(2, 5, 8, 10:12, 14, 17),
-]
+summary_table <- summary_table |>
+  dplyr::filter(
+    !(Trait == "Grain Yield (Kg/Ha)" & `Relative Position` != "Peak") &
+      !(Trait == "Virus Ratings (Transformed)" & `Relative Position` != "Peak" & Chromosome == "7A")
+  )
 
 # Write csv
 write.csv(
@@ -510,9 +515,11 @@ summary_table <- postdcs_gwas_b |>
   )
 
 # Curate table
-summary_table <- summary_table[
-  c(2, 4:6, 8, 11),
-]
+summary_table <- summary_table |>
+  dplyr::filter(
+    !(`Relative Position` != "Peak" & Chromosome == "3B") &
+      !(`Relative Position` != "Peak" & Chromosome == "7A")
+  )
 
 # Write csv
 write.csv(

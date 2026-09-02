@@ -18,7 +18,7 @@ PostDCS_PCA <- PostDCS$pcs_geno |>
   dplyr::select(rID, dplyr::everything())
 
 # Get keyfile
-keyfile_path <- file.path(getwd(), "../Raw_Data/virus_mapping_2025.tsv")
+keyfile_path <- file.path(getwd(), "../Raw_Data_Round_2/virus_mapping_2026.tsv")
 
 # Define all possible classes
 all_shapes <- c(

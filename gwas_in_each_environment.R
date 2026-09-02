@@ -63,7 +63,10 @@ blues_se <- read.csv(
 )
 
 # Read in genotype file
-geno <- gaston::read.vcf("virus_gwas_2025_production_final.vcf.gz", convert.chr = FALSE)
+geno <- gaston::read.vcf("virus_mapping_2026_production_final.vcf.gz", convert.chr = FALSE)
+
+# Reassign chromosome names
+geno@snps$chr <- gsub("Chr", "", geno@snps$chr)
 
 # Make a marker map
 marker_map <- geno@snps |>
@@ -168,9 +171,10 @@ for (i in unique(blues_se$YE)) {
           fixed = predicted.value ~ rID,
           random = ~YE,
           rcov = ~units,
-          W = diag(temp_pheno_sub$std.error),
+          W = diag(1 / (temp_pheno_sub$std.error^2)),
           data = temp_pheno_sub,
-          dateWarning = FALSE
+          dateWarning = FALSE,
+          henderson = FALSE
         )
       )
 

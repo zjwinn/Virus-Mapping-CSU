@@ -57,19 +57,18 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 target_packages <- c("GWASTools", "GENESIS")
 
 # Identify which packages are not currently installed
-missing_packages <- target_packages[!(target_packages %in% installed.packages()[,"Package"])]
+missing_packages <- target_packages[!(target_packages %in% installed.packages()[, "Package"])]
 
 # Install the missing packages if any
 if (length(missing_packages) > 0) {
   cat("Installing missing packages: ", paste(missing_packages, collapse = ", "), "\n")
-  # Setting update = FALSE prevents it from prompting to update all other Bioc packages, 
+  # Setting update = FALSE prevents it from prompting to update all other Bioc packages,
   # ask = FALSE prevents interactive prompts
   BiocManager::install(missing_packages, update = FALSE, ask = FALSE)
   cat("Installation complete.\n")
 } else {
   cat("Success: GWASTools and GENESIS are already installed.\n")
 }
-
 
 # Make a directory
 directory <- file.path(
@@ -245,13 +244,16 @@ if (!file.exists(file.path(directory, "blues_single_environment.csv"))) {
       # Check type
       if (unique(temp2$DATA_TYPE) == "NORMAL") {
         # Run model in sommer
-        temp3 <- try(sommer::mmes(
-          fixed = Y ~ rID,
-          random = ~ sommer::spl2Dc(ROW, COLUMN),
-          rcov = ~units,
-          data = temp2,
-          dateWarning = FALSE
-        ))
+        temp3 <- try(
+          sommer::mmes(
+            fixed = Y ~ rID,
+            random = ~ sommer::spl2Dc(ROW, COLUMN),
+            rcov = ~units,
+            data = temp2,
+            dateWarning = FALSE,
+            henderson = FALSE
+          )
+        )
 
         # If it fails toss the data
         if (class(temp3) == "try-error") {
@@ -275,13 +277,16 @@ if (!file.exists(file.path(directory, "blues_single_environment.csv"))) {
         temp2$Y_t <- INT_blom(temp2$Y)
 
         # Run model in sommer
-        temp3 <- try(sommer::mmes(
-          fixed = Y_t ~ rID,
-          random = ~ sommer::spl2Dc(ROW, COLUMN),
-          rcov = ~units,
-          data = temp2,
-          dateWarning = FALSE
-        ))
+        temp3 <- try(
+          sommer::mmes(
+            fixed = Y_t ~ rID,
+            random = ~ sommer::spl2Dc(ROW, COLUMN),
+            rcov = ~units,
+            data = temp2,
+            dateWarning = FALSE,
+            henderson = FALSE
+          )
+        )
 
         # If it fails toss the data
         if (class(temp3) == "try-error") {
@@ -390,9 +395,10 @@ if (!file.exists(file.path(directory, "blues_multiple_environment_pre_yd.csv")) 
       fixed = predicted.value ~ rID,
       random = ~YEN,
       rcov = ~units,
-      W = diag(temp1$std.error),
+      W = diag(1 / temp1$std.error^2), ,
       data = temp1,
-      dateWarning = FALSE
+      dateWarning = FALSE,
+      henderson = FALSE
     )
 
     # Make message
@@ -499,8 +505,10 @@ if (!file.exists(file.path(directory, "blues_multiple_environment_pre_yd.csv")) 
       fixed = predicted.value ~ rID,
       random = ~YEN,
       rcov = ~units,
-      W = diag(1/temp1$std.error^2),
-      data = temp1
+      W = diag(1 / temp1$std.error^2),
+      data = temp1,
+      dateWarning = FALSE,
+      henderson = FALSE
     )
 
     # Make message
@@ -699,7 +707,10 @@ plot_gwas <- function(df,
 #### Pre Yellowing Disease ####
 
 # Read in data
-geno <- gaston::read.vcf("virus_gwas_2025_production_final.vcf.gz", convert.chr = FALSE)
+geno <- gaston::read.vcf("virus_mapping_2026_production_final.vcf.gz", convert.chr = FALSE)
+
+# Reassign chromosome names
+geno@snps$chr <- gsub("Chr", "", geno@snps$chr)
 
 # Make a marker map
 marker_map <- geno@snps |>
